@@ -4,13 +4,14 @@ with pkgs;
 
 let
   libtorch_version = "1.8.1";
+  libcxx-for-libtorch = if stdenv.hostPlatform.system == "x86_64-darwin" then libcxx else stdenv.cc.cc.lib;
   libmklml = opts: callPackage ./mklml.nix ({
   } // opts);
   callCpu = opts: callPackage ./generic.nix ({
-    libcxx = libcxx;
+    libcxx = libcxx-for-libtorch;
   } // opts);
   callGpu = opts: callPackage ./generic.nix ({
-    libcxx = libcxx;
+    libcxx = libcxx-for-libtorch;
   } // opts);
 in
 {
