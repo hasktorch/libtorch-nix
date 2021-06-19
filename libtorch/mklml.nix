@@ -1,4 +1,4 @@
-{ stdenv, fetchzip, useIomp5
+{ stdenv, fetchzip, useIomp5, lib
 }:
 
 stdenv.mkDerivation rec {
@@ -18,10 +18,10 @@ stdenv.mkDerivation rec {
     else throw "missing url for platform ${stdenv.hostPlatform.system}";
 
   preFixup =
-    stdenv.lib.optionalString (!useIomp5) ''
+    lib.optionalString (!useIomp5) ''
     rm $out/lib/libiomp5.*
     '' + 
-    stdenv.lib.optionalString stdenv.isDarwin (''
+    lib.optionalString stdenv.isDarwin (''
     echo "-- before fixup --"
     for f in $(ls $out/lib/*.dylib); do
         otool -L $f
@@ -29,7 +29,7 @@ stdenv.mkDerivation rec {
     for f in $(ls $out/lib/*.dylib); do
         install_name_tool -id @rpath/$(basename $f) $f || true
     done
-  '' + (stdenv.lib.optionalString useIomp5
+  '' + (lib.optionalString useIomp5
   ''
     install_name_tool -change @rpath/libiomp5.dylib $out/lib/libiomp5.dylib $out/lib/libmklml.dylib
   '')
@@ -48,7 +48,7 @@ stdenv.mkDerivation rec {
     cp -r {$src,$out}/lib/
   '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "libmklml";
     homepage = https://software.intel.com/en-us/mkl;
     license = { free = false; fullName = "Intel Simplified Software License"; shortName = "issl"; url = "https://software.intel.com/en-us/license/intel-simplified-software-license"; };

@@ -1,6 +1,8 @@
-{ stdenv, fetchzip, autoreconfHook, gettext
+{ lib, fetchzip, autoreconfHook, gettext
 , version ? "1.8", mkSrc, buildtype
 , libcxx ? null
+, stdenv
+, unzip
 }:
 
 stdenv.mkDerivation rec {
@@ -9,9 +11,14 @@ stdenv.mkDerivation rec {
 
   src = mkSrc buildtype;
   libcxxPath  = libcxx.outPath;
+  nativeBuildInputs  = [unzip];
+  unpackCmd = ''
+    ${unzip}/bin/unzip "$curSrc"
+    sourceRoot=libtorch
+  '';
 
   propagatedBuildInputs = if stdenv.isDarwin then [ libcxx ] else [];
-  preFixup = stdenv.lib.optionalString stdenv.isDarwin ''
+  preFixup = lib.optionalString stdenv.isDarwin ''
     echo "-- before fixup --"
     for f in $(ls $out/lib/*.dylib); do
         otool -L $f
@@ -31,19 +38,18 @@ stdenv.mkDerivation rec {
     done
   '';
   installPhase = ''
-    ls $src
     mkdir $out
-    if [ -d $src/bin ] ; then
-      cp -r {$src,$out}/bin/
+    if [ -d ./bin ] ; then
+      cp -r {.,$out}/bin/
     fi
-    cp -r {$src,$out}/include/
-    cp -r {$src,$out}/lib/
-    cp -r {$src,$out}/share/
+    cp -r {.,$out}/include/
+    cp -r {.,$out}/lib/
+    cp -r {.,$out}/share/
   '';
 
   dontStrip = true;
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "libtorch";
     homepage = https://pytorch.org/;
     license = licenses.bsd3;
