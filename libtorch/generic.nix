@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
   libcxxPath  = libcxx.outPath;
 
   propagatedBuildInputs = if stdenv.isDarwin then [ libcxx ] else [];
-  preFixup = stdenv.lib.optionalString stdenv.isDarwin ''
+  preFixup = lib.optionalString stdenv.isDarwin ''
     echo "-- before fixup --"
     for f in $(ls $out/lib/*.dylib); do
         otool -L $f
@@ -43,7 +43,7 @@ stdenv.mkDerivation rec {
 
   dontStrip = true;
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "libtorch";
     homepage = https://pytorch.org/;
     license = licenses.bsd3;
