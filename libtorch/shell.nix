@@ -1,4 +1,4 @@
-{ pkgs ? import ../pin/nixpkgs.nix {} }:
+{ pkgs ? import ../nix/nixpkgs.nix {} }:
 
 let
   build = pkgs.callPackage ./release.nix { };

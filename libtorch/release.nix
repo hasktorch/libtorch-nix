@@ -1,9 +1,9 @@
-{ pkgs ? import ../pin/nixpkgs.nix {} }:
+{ pkgs ? import ../nix/nixpkgs.nix {} }:
 
 with pkgs;
 
 let
-  libtorch_version = "1.8.1";
+  libtorch_version = "1.9.0";
   libcxx-for-libtorch = if stdenv.hostPlatform.system == "x86_64-darwin" then libcxx else stdenv.cc.cc.lib;
   libmklml = opts: callPackage ./mklml.nix ({
   } // opts);
@@ -22,18 +22,9 @@ in
     buildtype = "cpu";
     mkSrc = buildtype:
       if stdenv.hostPlatform.system == "x86_64-linux" then
-        fetchzip {
-          # Source file is  "https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-${libtorch_version}%2Bcpu.zip".
-          # Nix can not use the url directly, because this link includes '%2B'.
-          #url = "https://github.com/hasktorch/libtorch-binary-for-ci/releases/download/${libtorch_version}/cpu-libtorch-cxx11-abi-shared-with-deps-latest.zip";
-          url = "https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-${libtorch_version}%2Bcpu.zip";
-          sha256 = "01wav5s98fch8q1inixs8xrlnbbmy3v90gxvh6hrbnyqb9qq4xy6";
-        }
+        libtorch-cpu-linux
       else if stdenv.hostPlatform.system == "x86_64-darwin" then
-        fetchzip {
-          url = "https://download.pytorch.org/libtorch/cpu/libtorch-macos-${libtorch_version}.zip";
-          sha256 = "0fw3i7sa6n2h2hhiq4fig9hldix44fbnvybkcb1cijg5kivjg20m";
-        }
+        libtorch-cpu-macos
       else throw "missing url for platform ${stdenv.hostPlatform.system}";
   };
   ${if stdenv.hostPlatform.system == "x86_64-darwin" then null else "libtorch_cudatoolkit_11_1"} = callGpu {
@@ -41,11 +32,7 @@ in
     buildtype = "cu111";
     mkSrc = buildtype:
       if stdenv.hostPlatform.system == "x86_64-linux" then
-        fetchzip {
-          #url = "https://github.com/hasktorch/libtorch-binary-for-ci/releases/download/${libtorch_version}/cu111-libtorch-cxx11-abi-shared-with-deps-latest.zip";
-          url = "https://download.pytorch.org/libtorch/cu111/libtorch-cxx11-abi-shared-with-deps-${libtorch_version}%2Bcu111.zip";
-          sha256 = "17cvi01jkqadc0gzjdssrp5z5m71qh8wnhiv0x38y3r79mdr6vsm";
-        }
+        libtorch-cu111-linux
       else throw "missing url for platform ${stdenv.hostPlatform.system}";
   };
   ${if stdenv.hostPlatform.system == "x86_64-darwin" then null else "libtorch_cudatoolkit_10_2"} = callGpu {
@@ -53,10 +40,7 @@ in
     buildtype = "cu102";
     mkSrc = buildtype:
       if stdenv.hostPlatform.system == "x86_64-linux" then
-        fetchzip {
-          url = "https://download.pytorch.org/libtorch/cu102/libtorch-cxx11-abi-shared-with-deps-${libtorch_version}%2Bcu102.zip";
-          sha256 = "0s7z407r83xjc1kfnlmf5pgnyfkjik9vwxcxiz67xbyscdj1bggn";
-        }
+        libtorch-cu102-linux
       else throw "missing url for platform ${stdenv.hostPlatform.system}";
   };
 }
