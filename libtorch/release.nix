@@ -1,4 +1,6 @@
-{ pkgs ? import ../nix/nixpkgs.nix {} }:
+{ sources ? import ../nix/sources.nix {}
+, pkgs ? sources.nixpkgs
+}:
 
 with pkgs;
 
@@ -15,16 +17,16 @@ let
   } // opts);
 in
 {
-  libmklml = libmklml { useIomp5 = true; };
-  libmklml_without_iomp5 = libmklml { useIomp5 = false; };
+  libmklml = libmklml { useIomp5 = true; inherit lib;};
+  libmklml_without_iomp5 = libmklml { useIomp5 = false; inherit lib;};
   libtorch_cpu = callCpu {
     version = libtorch_version;
     buildtype = "cpu";
     mkSrc = buildtype:
       if stdenv.hostPlatform.system == "x86_64-linux" then
-        libtorch-cpu-linux
+        sources.libtorch-cpu-linux
       else if stdenv.hostPlatform.system == "x86_64-darwin" then
-        libtorch-cpu-macos
+        sources.libtorch-cpu-macos
       else throw "missing url for platform ${stdenv.hostPlatform.system}";
   };
   ${if stdenv.hostPlatform.system == "x86_64-darwin" then null else "libtorch_cudatoolkit_11_1"} = callGpu {
@@ -32,7 +34,7 @@ in
     buildtype = "cu111";
     mkSrc = buildtype:
       if stdenv.hostPlatform.system == "x86_64-linux" then
-        libtorch-cu111-linux
+        sources.libtorch-cu111-linux
       else throw "missing url for platform ${stdenv.hostPlatform.system}";
   };
   ${if stdenv.hostPlatform.system == "x86_64-darwin" then null else "libtorch_cudatoolkit_10_2"} = callGpu {
@@ -40,7 +42,7 @@ in
     buildtype = "cu102";
     mkSrc = buildtype:
       if stdenv.hostPlatform.system == "x86_64-linux" then
-        libtorch-cu102-linux
+        sources.libtorch-cu102-linux
       else throw "missing url for platform ${stdenv.hostPlatform.system}";
   };
 }

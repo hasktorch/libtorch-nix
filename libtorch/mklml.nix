@@ -1,4 +1,4 @@
-{ stdenv, fetchzip, useIomp5
+{ stdenv, fetchzip, useIomp5, lib
 }:
 
 stdenv.mkDerivation rec {
