@@ -10,7 +10,7 @@ function prefetch_sha256 {
   else
       url="${base_name}${build}/libtorch-cxx11-abi-shared-with-deps-${VERSION}%2B${build}.zip"
   fi
-  nix-prefetch-url --unpack --type sha256 --name libtorch-${build}-${os}-${VERSION}.zip ${url} > sha/libtorch-${build}-${os}
+  nix-prefetch-url --type sha256 --name libtorch-${build}-${os}-${VERSION}.zip ${url} > sha/libtorch-${build}-${os}
 }
 
 prefetch_sha256 cpu   macos

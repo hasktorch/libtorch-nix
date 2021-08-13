@@ -9,10 +9,11 @@ let
     else throw "bad build config";
 
   fetcher = build: os: let
-    name =  "libtorch-${build}-${os}";
-    sha256 = lib.strings.removeSuffix "\n" (builtins.readFile (./sha + "/${name}"));
+    json =  "libtorch-${build}-${os}";
+    name =  "libtorch-${build}-${os}-${libtorch_version}.zip";
+    sha256 = lib.strings.removeSuffix "\n" (builtins.readFile (./sha + "/${json}"));
     url = mkUrl build os;
-  in pkgs.fetchzip {inherit url sha256; name = name + "-" + libtorch_version; };
+  in pkgs.fetchurl {inherit url sha256; inherit name; };
 
   libtorch-cpu-macos   = fetcher "cpu"   "macos";
   libtorch-cpu-linux   = fetcher "cpu"   "linux";
