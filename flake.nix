@@ -39,6 +39,7 @@
         libtorchSrc = pkgs.callPackage ./libtorch { inherit pkgs; };
       in
       rec {
+        defaultPackage = packages.libtorch_cpu;
         packages = {
           inherit (libtorchSrc)
             libtorch_cpu
