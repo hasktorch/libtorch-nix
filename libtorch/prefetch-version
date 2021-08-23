@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+VERSION="$1"
+
+function prefetch_sha256 {
+  build=$1
+  os=$2
+  base_name="https://download.pytorch.org/libtorch/"
+  if [[ "${os}" == "macos" ]]; then
+      url="${base_name}cpu/libtorch-macos-${VERSION}.zip"
+  else
+      url="${base_name}${build}/libtorch-cxx11-abi-shared-with-deps-${VERSION}%2B${build}.zip"
+  fi
+  nix-prefetch-url --type sha256 --name libtorch-${build}-${os}-${VERSION}.zip ${url} > sha/libtorch-${build}-${os}
+}
+
+prefetch_sha256 cpu   macos
+prefetch_sha256 cpu   linux
+prefetch_sha256 cu102 linux
+prefetch_sha256 cu111 linux
