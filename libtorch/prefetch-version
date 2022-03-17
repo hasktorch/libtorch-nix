@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 VERSION="$1"
 
 function prefetch_sha256 {
@@ -16,4 +16,4 @@ function prefetch_sha256 {
 prefetch_sha256 cpu   macos
 prefetch_sha256 cpu   linux
 prefetch_sha256 cu102 linux
-prefetch_sha256 cu111 linux
+prefetch_sha256 cu113 linux

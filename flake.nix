@@ -18,7 +18,7 @@
           torch_cuda = libtorch;
         } // (prev.lib.optionalAttrs (prev.system == "x86_64-linux") {
           inherit (libtorch-suite)
-            libtorch_cudatoolkit_11_1
+            libtorch_cudatoolkit_11_3
             libtorch_cudatoolkit_10_2
           ;
         });
@@ -27,7 +27,7 @@
       overlays = {
         cpu              = mkOverlay "libtorch_cpu";
         cudatoolkit_10_2 = mkOverlay "libtorch_cudatoolkit_10_2";
-        cudatoolkit_11_1 = mkOverlay "libtorch_cudatoolkit_11_1";
+        cudatoolkit_11_3 = mkOverlay "libtorch_cudatoolkit_11_3";
       };
       overlay = overlays.cpu;
     } // (utils.lib.eachSystem [ "x86_64-darwin" "x86_64-linux" ] (system:
@@ -48,7 +48,7 @@
           ;
         } // (pkgs.lib.optionalAttrs (system == "x86_64-linux") {
           inherit (libtorchSrc)
-            libtorch_cudatoolkit_11_1
+            libtorch_cudatoolkit_11_3
             libtorch_cudatoolkit_10_2
           ;
         });
