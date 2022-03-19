@@ -43,7 +43,7 @@ in
     version = "cu113-${libtorch_version}";
     buildtype = "cu113";
     mkSrc = buildtype:
-      if stdenv.hostPlatform.system == "x86_64-linux" then libtorch-cu111-linux
+      if stdenv.hostPlatform.system == "x86_64-linux" then libtorch-cu113-linux
       else throw "missing url for platform ${stdenv.hostPlatform.system}";
   };
   libtorch_cudatoolkit_10_2 = callGpu {
